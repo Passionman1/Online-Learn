@@ -1,0 +1,50 @@
+import numpy as np
+import random
+import math
+import operator
+import csv
+import matplotlib
+import pandas as pd
+import seaborn as sns
+import matplotlib as mpl
+import matplotlib as plt
+import warnings
+
+df = pd.read_csv(r'C:\Users\13408\Desktop\1521.csv')
+#df = df[df['Type'] == 'score']
+df = df.drop(columns=['grade'])    
+df = df.drop(columns=['预测测试结果概率_0.0'])    
+df = df.drop(columns=['预测测试结果概率_1.0']) 
+df = df.drop(columns=['预测测试结果概率_2.0'])     
+print(df.info())
+print(df.describe())
+
+X = df.drop(columns=['score'])
+y = df['score']
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=123)
+from sklearn.tree import DecisionTreeClassifier
+model = DecisionTreeClassifier(max_depth=8,random_state=1234)
+model.fit(X_train,y_train)
+
+y_pred = model.predict(X_test)
+y_pred[:100]
+
+a = pd.DataFrame()
+a['预测值'] = list(y_pred)
+a['实际值'] = list(y_test)
+a
+
+from sklearn.metrics import accuracy_score
+score = accuracy_score(y_pred,y_test)
+score
+
+y_pred_proba = model.predict_proba(X_test)
+b = pd.DataFrame(y_pred_proba,columns = ['好','中','差'])
+b
+features = X.columns
+importances = model.feature_importances_
+df = pd.DataFrame()
+df['特征名'] = features
+df['特征重要性'] = importances
+df.sort_values('特征重要性',ascending=False)
