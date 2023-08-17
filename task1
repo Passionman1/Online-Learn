@@ -1,0 +1,31 @@
+import pandas as pd
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import warnings
+
+df=pd.read_csv('task1_1.csv')
+df.head()
+
+df['answer_time']=pd.to_datetime(df['answer_time'],format='%Y/%m/%d %H:%M',errors='coerce')
+df['time']=df['answer_time'].dt.hour
+df.drop(['answer_time'],axis=1,inplace=True)
+
+morning=df[(df['time']>=3)&(df['time']<=10)]
+noon=df[(df['time']>10)&(df['time']<=14)]
+night=df[(df['time']>15)&(df['time']<=22)]
+
+place_money=df.groupby(['time'])['score'].size().sort_values(ascending=False).to_frame().apply(lambda x: x.tolist())
+
+morning_place_money=morning.groupby(['time'])['score'].size().sort_values(ascending=False).to_frame().apply(lambda x: x.tolist())
+
+noon_place_money=noon.groupby(['time'])['score'].size().sort_values(ascending=False).to_frame().apply(lambda x: x.tolist())
+
+night_place_money=night.groupby(['time'])['score'].size().sort_values(ascending=False).to_frame().apply(lambda x: x.tolist())
+
+place_money[df1].plot.pie(autopct = '%1.2f%%')
+plt.figure(1)
+plt.title('该班学生成绩的分布图')
+plt.show()
